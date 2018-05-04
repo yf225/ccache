@@ -3310,6 +3310,11 @@ ccache(int argc, char *argv[])
 	}
 
 	cc_log("Source file: %s", input_file);
+	bool should_print = false;
+	if (strstr(request, "THCSleep.cu") != NULL) {
+	    should_print = true;
+	}
+
 	if (generating_dependencies) {
 		cc_log("Dependency file: %s", output_dep);
 	}
@@ -3343,12 +3348,12 @@ ccache(int argc, char *argv[])
 		if (object_hash) {
 			update_cached_result_globals(object_hash);
 
-			cc_log("Try to return from cache in FROMCACHE_DIRECT_MODE");
+			if (should_print) cc_log("Try to return from cache in FROMCACHE_DIRECT_MODE");
 
 			// If we can return from cache at this point then do so.
 			from_cache(FROMCACHE_DIRECT_MODE, 0);
 
-			cc_log("Not able to return from cache in FROMCACHE_DIRECT_MODE, but the object was already found in manifest");
+			if (should_print) cc_log("Not able to return from cache in FROMCACHE_DIRECT_MODE, but the object was already found in manifest");
 
 			// Wasn't able to return from cache at this point. However, the object
 			// was already found in manifest, so don't readd it later.
@@ -3396,12 +3401,12 @@ ccache(int argc, char *argv[])
 		put_object_in_manifest = true;
 	}
 
-	cc_log("Try to return from cache in FROMCACHE_CPP_MODE");
+	if (should_print) cc_log("Try to return from cache in FROMCACHE_CPP_MODE");
 
 	// If we can return from cache at this point then do.
 	from_cache(FROMCACHE_CPP_MODE, put_object_in_manifest);
 
-	cc_log("Not able return from cache in FROMCACHE_CPP_MODE");
+	if (should_print) cc_log("Not able return from cache in FROMCACHE_CPP_MODE");
 
 	if (conf->read_only) {
 		cc_log("Read-only mode; running real compiler");
@@ -3410,7 +3415,7 @@ ccache(int argc, char *argv[])
 
 	add_prefix(compiler_args, conf->prefix_command);
 
-	cc_log("Run real compiler, sending output to cache");
+	if (should_print) cc_log("Run real compiler, sending output to cache");
 
 	// Run real compiler, sending output to cache.
 	to_cache(compiler_args);

@@ -3311,7 +3311,7 @@ ccache(int argc, char *argv[])
 
 	cc_log("Source file: %s", input_file);
 	bool should_print = false;
-	if (strstr(request, "THCSleep.cu") != NULL) {
+	if (strstr(input_file, "THCSleep.cu") != NULL) {
 	    should_print = true;
 	}
 
